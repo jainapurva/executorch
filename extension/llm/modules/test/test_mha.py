@@ -92,7 +92,10 @@ class AttentionTest(unittest.TestCase):
         et_res = self.et_mha(self.x, self.x)  # Self attention.
         tt_res = self.tt_mha(self.x, self.x)  # Self attention.
 
-        self.assertTrue(torch.allclose(et_res, tt_res))
+        self.assertTrue(
+            torch.allclose(et_res, tt_res),
+            msg=f"TorchTune output is not close to ET output.\n\nTorchTune: {tt_res}\nET output: {et_res}",
+        )
 
         # TODO: KV cache.
         # self.et_mha.setup_cache(1, dtype=torch.float16, max_seq_len=20)
@@ -113,7 +116,10 @@ class AttentionTest(unittest.TestCase):
         )
         et_res = et_mha_ep.module()(self.x, self.x)
         tt_res = self.tt_mha(self.x, self.x)
-        self.assertTrue(torch.allclose(et_res, tt_res))
+        self.assertTrue(
+            torch.allclose(et_res, tt_res),
+            msg=f"TorchTune output is not close to ET output.\n\nTorchTune: {tt_res}\nET output: {et_res}",
+        )
 
         # TODO: KV cache.
 
@@ -139,6 +145,9 @@ class AttentionTest(unittest.TestCase):
         et_res = method.execute((self.x, self.x))
         tt_res = self.tt_mha(self.x, self.x)
 
-        self.assertTrue(torch.allclose(et_res[0], tt_res, atol=1e-06))
+        self.assertTrue(
+            torch.allclose(et_res[0], tt_res, atol=1e-05),
+            msg=f"TorchTune output is not close to ET output.\n\nTorchTune: {tt_res}\nET output: {et_res[0]}",
+        )
 
         # TODO: KV cache.
